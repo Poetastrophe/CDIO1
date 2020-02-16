@@ -68,6 +68,10 @@ public class UserDAONonPersistent implements IUserDAO
 
     public void createUser(UserDTO newUser) throws DALException
     {
+        if (newUser.getUserId() < 11 || newUser.getUserId() > 99)
+        {
+            throw new DALException("BrugerID skal være mellem 11 og 99 (inklusivt)");
+        }
         for (UserDTO user : users)
         {
             if (user.getUserId() == newUser.getUserId())
