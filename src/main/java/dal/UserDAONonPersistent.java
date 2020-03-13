@@ -27,16 +27,16 @@ public class UserDAONonPersistent implements IUserDAO
         dummy1.setRoles(roles);
 
         UserDTO dummy2 = new UserDTO();
-        dummy1.setUserId(12);
-        dummy1.setUserName("Steen Sikkert");
-        dummy1.setIni("StSi");
-        dummy1.setRoles(roles);
+        dummy2.setUserId(12);
+        dummy2.setUserName("Steen Sikkert");
+        dummy2.setIni("StSi");
+        dummy2.setRoles(roles);
 
         UserDTO dummy3 = new UserDTO();
-        dummy1.setUserId(13);
-        dummy1.setUserName("Dan Mark");
-        dummy1.setIni("DaMa");
-        dummy1.setRoles(roles);
+        dummy3.setUserId(13);
+        dummy3.setUserName("Dan Mark");
+        dummy3.setIni("DaMa");
+        dummy3.setRoles(roles);
 
         try{
             createUser(dummy1);
