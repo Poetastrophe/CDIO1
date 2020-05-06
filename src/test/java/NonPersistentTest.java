@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import dal.IUserDAO.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -34,7 +35,7 @@ public class NonPersistentTest {
         UserDAONonPersistent NonPersistent = new UserDAONonPersistent();
         String message = "";
         try{
-            UserDTO user1 = new UserDTO(-1, "Name", "Na", "123456-1234", "password", "Admin");
+            UserDTO user1 = new UserDTO(-1, "Name", "Na", "123456-1234", "password", Arrays.asList("Admin"));
             NonPersistent.createUser(user1);
             message = "User Created.";
         } catch (DALException E) {
@@ -45,7 +46,7 @@ public class NonPersistentTest {
         // When creating a user with a valid ID, i get no exception.
 
         try{
-            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", "Admin");
+            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", Arrays.asList("Admin"));
             NonPersistent.createUser(user1);
             message = "User Created.";
         } catch (Exception E) {
@@ -56,7 +57,7 @@ public class NonPersistentTest {
         // When creating a user with the same ID as another one, i get an exception.
 
         try{
-            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", "Admin");
+            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", Arrays.asList("Admin"));
             NonPersistent.createUser(user1);
             message = "User Created.";
         } catch (DALException E) {
@@ -71,7 +72,7 @@ public class NonPersistentTest {
         //setup
         UserDAONonPersistent NonPersistent = new UserDAONonPersistent();
         try {
-            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", "Admin");
+            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", Arrays.asList("Admin"));
             NonPersistent.createUser(user1);
         } catch (DALException ignored){
 
@@ -103,7 +104,7 @@ public class NonPersistentTest {
         //setup (When creating an object of UserDAONonPersistent, 3 dummy users are initialized automatically)
         UserDAONonPersistent NonPersistent = new UserDAONonPersistent();
         try {
-            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", "Admin");
+            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", Arrays.asList("Admin"));
             NonPersistent.createUser(user1);
         } catch (DALException E){
 
@@ -123,7 +124,7 @@ public class NonPersistentTest {
         //setup
         UserDAONonPersistent NonPersistent = new UserDAONonPersistent();
         try {
-            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", "Admin");
+            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", Arrays.asList("Admin"));
             NonPersistent.createUser(user1);
         } catch (DALException E){
 
@@ -134,7 +135,7 @@ public class NonPersistentTest {
         // When trying to update a user that doesn't exist, i get an exception
 
         try {
-            UserDTO user2 = new UserDTO(-1, "Name", "Na", "123456-1234", "password", "Admin");
+            UserDTO user2 = new UserDTO(-1, "Name", "Na", "123456-1234", "password", Arrays.asList("Admin"));
             NonPersistent.updateUser(user2);
         } catch (DALException E){
             message = E.getMessage();
@@ -144,7 +145,7 @@ public class NonPersistentTest {
         // When trying to update a user that exists, it gets updated
         message = "";
         try {
-            UserDTO user2 = new UserDTO(20, "UpdatedUser", "Na", "123456-1234", "password", "Admin");
+            UserDTO user2 = new UserDTO(20, "UpdatedUser", "Na", "123456-1234", "password", Arrays.asList("Admin"));
             NonPersistent.updateUser(user2);
         } catch (DALException E){
             message = E.getMessage();
@@ -159,7 +160,7 @@ public class NonPersistentTest {
         //setup
         UserDAONonPersistent NonPersistent = new UserDAONonPersistent();
         try {
-            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", "Admin");
+            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", Arrays.asList("Admin"));
             NonPersistent.createUser(user1);
         } catch (DALException E){
 

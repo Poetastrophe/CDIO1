@@ -37,7 +37,7 @@ public class SQLTest{
             userDAO.deleteUser(20);
         } catch (IUserDAO.DALException ignored){}
         try{
-            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", "1");
+            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", Arrays.asList("1"));
             userDAO.createUser(user1);
             message = "User Created.";
         } catch (Exception E) {
@@ -48,13 +48,15 @@ public class SQLTest{
         // When creating a user with the same ID as another one, i get an exception.
 
         try{
-            UserDTO user2 = new UserDTO(-1, "Name", "Na", "123456-1234", "password", "1");
-            UserDTO user1 = new UserDTO(-1, "Name", "Na", "123456-1234", "password", "1");
+            UserDTO user2 = new UserDTO(-1, "Name", "Na", "123456-1234", "password", Arrays.asList("1"));
+            UserDTO user1 = new UserDTO(-1, "Name", "Na", "123456-1234", "password", Arrays.asList("1"));
             userDAO.createUser(user1);
             userDAO.createUser(user2);
             message = "User Created.";
         } catch (IUserDAO.DALException E) {
             message = E.getMessage();
+        }catch (IUserDAO.UserFormatException ignored){
+
         }
         assertEquals(message,"Cannot create new user. Check for unique ID");
 
@@ -82,9 +84,11 @@ public class SQLTest{
     public void testGetUserList() throws IUserDAO.DALException {
         IUserDAO iUserDAO = new UserDAOSQL("localhost","3306","user_database",username,password);
         try {
-            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", "1");
+            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", Arrays.asList("1"));
             iUserDAO.createUser(user1);
         } catch (IUserDAO.DALException ignored){
+
+        }catch (IUserDAO.UserFormatException ignored){
 
         }
 
@@ -103,7 +107,7 @@ public class SQLTest{
         IUserDAO UserDAO = new UserDAOSQL("localhost","3306","user_database",username,password);
 
         try {
-            UserDTO  user1 = new UserDTO(20, "Test1", "TeTe", "123456-1234", "password", "1");
+            UserDTO  user1 = new UserDTO(20, "Test1", "TeTe", "123456-1234", "password", Arrays.asList("1"));
             UserDAO.createUser(user1);
 
             int ID = user1.getUserId();
@@ -114,7 +118,7 @@ public class SQLTest{
             String newRole = "2";
             List<String> roles = new ArrayList<>();
             roles.add(newRole);
-            UserDTO changeTo = new UserDTO(ID,newName,newInIn,newCPR,newPassword,newRole);
+            UserDTO changeTo = new UserDTO(ID,newName,newInIn,newCPR,newPassword,roles);
             UserDAO.updateUser(changeTo);
             user1 = UserDAO.getUser(ID);
             assertEquals(newName, user1.getUserName());
@@ -124,6 +128,8 @@ public class SQLTest{
            assertEquals(roles, user1.getRoles());
 
         } catch (IUserDAO.DALException ignored){
+
+        } catch (IUserDAO.UserFormatException ignored){
 
         }
 
@@ -142,7 +148,7 @@ public class SQLTest{
             message = e.toString();
         }
         try{
-            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", "1");
+            UserDTO user1 = new UserDTO(20, "Name", "Na", "123456-1234", "password", Arrays.asList("1"));
             userDAO.createUser(user1);
         } catch (Exception ignored) {
         }

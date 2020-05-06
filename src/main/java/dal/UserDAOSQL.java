@@ -1,6 +1,7 @@
 package dal;
 
 import dto.UserDTO;
+import func.IFunc;
 import org.apache.ibatis.jdbc.ScriptRunner;
 
 import java.io.*;
@@ -9,6 +10,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UserDAOSQL implements IUserDAO {
@@ -100,7 +102,7 @@ public class UserDAOSQL implements IUserDAO {
         sr.runScript(reader);
         _url = "jdbc:mysql://localhost:3306/User_Database" + _END;
         try{
-            UserDTO user1 = new UserDTO(0,"Admin","Ad","0123456789","password","1");
+            UserDTO user1 = new UserDTO(0,"Admin","Ad","0123456789","password",Arrays.asList("1"));
             createUser(user1);
         } catch (Exception ignored){}
         try {
@@ -122,18 +124,20 @@ public class UserDAOSQL implements IUserDAO {
     @Override
     public UserDTO getUser(int userID) throws DALException {
         openConnection();
-        UserDTO user = new UserDTO();
+        // It will throw an exception if it stays null.
+        UserDTO user = null;
         try {
             PreparedStatement ps = _connection.prepareStatement("SELECT * FROM Users WHERE UserID=?");
             ps.setInt(1, userID);
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
-                user.setUserId(resultSet.getInt("UserID"));
-                user.setUserName(resultSet.getString("UserName"));
-                user.setIni(resultSet.getString("Ini"));
-                user.setUserCpr(resultSet.getString("cpr"));
-                user.setPassword(resultSet.getString("Password"));
-                user.addRole(resultSet.getString("Role"));
+                String userName = resultSet.getString("UserName");
+                String ini = resultSet.getString("Ini");
+                String cpr = resultSet.getString("cpr");
+                String password = resultSet.getString("Password");
+                String role = resultSet.getString("Role");
+                //TODO: Make sure that multiple roles can be added, how it is saved in the database, sincerely Christoffer.
+                user = new UserDTO(userID,userName,ini,cpr,password, Arrays.asList(role));
             }
         } catch (Exception e) {
             throw new DALException("Cannot get user");
@@ -150,13 +154,16 @@ public class UserDAOSQL implements IUserDAO {
         try {
             ResultSet resultSet = _statement.executeQuery("SELECT * FROM Users");
             while (resultSet.next()) {
-                list.add(new UserDTO());
-                list.get(list.size() - 1).setUserId(resultSet.getInt("UserID"));
-                list.get(list.size() - 1).setUserName(resultSet.getString("UserName"));
-                list.get(list.size() - 1).setIni(resultSet.getString("Ini"));
-                list.get(list.size() - 1).setUserCpr(resultSet.getString("cpr"));
-                list.get(list.size() - 1).setPassword(resultSet.getString("Password"));
-                list.get(list.size() - 1).addRole(resultSet.getString("Role"));
+                int userID = resultSet.getInt("UserID");
+                String userName = resultSet.getString("UserName");
+                String ini = resultSet.getString("Ini");
+                String cpr = resultSet.getString("cpr");
+                String password = resultSet.getString("Password");
+                String role = resultSet.getString("Role");
+
+                UserDTO tmpUser = new UserDTO(userID,userName,ini,cpr,password, Arrays.asList(role));
+
+                list.add(tmpUser);
             }
         } catch (SQLException e) {
             throw new DALException("Could not get user list");
@@ -166,7 +173,53 @@ public class UserDAOSQL implements IUserDAO {
     }
 
     @Override
-    public void createUser(UserDTO user) throws DALException {
+    public void createUser(UserDTO user) throws UserFormatException, DALException {
+        // Check parameters
+        int userID = user.getUserId();
+        String userName = user.getUserName();
+        String cpr = user.getCpr();
+        List<String> roles = user.getRoles();
+
+        List<IUserDAO.UserFormatException.errortypes> errorlist = new ArrayList<>();
+        // Check ID
+        if(!(11<=userID && userID<=99)){
+            errorlist.add(IUserDAO.UserFormatException.errortypes.ID);
+        }
+
+        // Check username
+        if(!(2<=userName.length() && userName.length()<=20)){
+            errorlist.add(IUserDAO.UserFormatException.errortypes.username);
+        }
+
+        // Check CPR
+        boolean isInteger=true;
+        String hyphen = "";
+        try{
+            int test = Integer.parseInt(cpr.substring(0,6));
+            test = Integer.parseInt(cpr.substring(7,11));
+            hyphen = cpr.substring(6,7);
+        }catch(NumberFormatException | StringIndexOutOfBoundsException e){
+            isInteger=false;
+            hyphen = "";
+        }
+        if(!isInteger || !hyphen.equals("-")){
+            errorlist.add(IUserDAO.UserFormatException.errortypes.CPR);
+        }
+        // Check roles
+        List<String> cpyRoles = new ArrayList<>(roles);
+        cpyRoles.remove(IUserDAO.RoleNames.ADMIN);
+        cpyRoles.remove(IUserDAO.RoleNames.FORMAND);
+        cpyRoles.remove(IUserDAO.RoleNames.OPERATOR);
+        cpyRoles.remove(IUserDAO.RoleNames.FARMACEUT);
+        if(cpyRoles.size()!=0){
+            errorlist.add(IUserDAO.UserFormatException.errortypes.roles);
+        }
+        //TODO: Check password
+
+        if(errorlist.size() > 0) {
+            throw new IUserDAO.UserFormatException("One or more user parameters are not correctly formatted",errorlist);
+        }
+
         openConnection();
         try {
             PreparedStatement ps =
@@ -192,7 +245,7 @@ public class UserDAOSQL implements IUserDAO {
     }
 
     @Override
-    public void updateUser(UserDTO newUser) throws DALException {
+    public void updateUser(UserDTO newUser) throws UserFormatException,DALException {
         for (UserDTO user : getUserList())
         {
             if (user.getUserId() == newUser.getUserId())
@@ -205,11 +258,7 @@ public class UserDAOSQL implements IUserDAO {
         throw new DALException("The user you tried to update didn't exist");
 
     }
-    public void updateUser(UserDTO user, int oldID) throws DALException {
-       deleteUser(oldID);
-       createUser(user);
 
-    }
     @Override
     public void deleteUser(int userId) throws DALException {
         openConnection();

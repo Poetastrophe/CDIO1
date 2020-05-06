@@ -7,8 +7,8 @@ public interface IUserDAO {
 
   UserDTO getUser(int userId) throws DALException;
   List<UserDTO> getUserList() throws DALException;
-  void createUser(UserDTO user) throws DALException;
-  void updateUser(UserDTO user) throws DALException;
+  void createUser(UserDTO user) throws UserFormatException, DALException;
+  void updateUser(UserDTO user) throws UserFormatException, DALException;
   void deleteUser(int userId) throws DALException;
 
   class DALException extends Exception {
@@ -27,5 +27,27 @@ public interface IUserDAO {
     }
 
   }
+  public static class RoleNames{
+   public static  final String ADMIN = "Administrator";
+   public static  final String FORMAND = "Formand";
+   public static  final String FARMACEUT = "Farmaceut";
+   public static  final String OPERATOR = "Operatør";
 
+
+  }
+
+  public static class UserFormatException extends Exception{
+    public List<errortypes> errorlist;
+    UserFormatException(String message, List<errortypes> errorlist){
+      super(message);
+      this.errorlist = errorlist;
+    }
+    public enum errortypes{
+      ID,
+      username,
+      CPR,
+      roles,
+      password
+    }
+  }
 }

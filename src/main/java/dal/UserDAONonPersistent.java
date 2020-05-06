@@ -12,44 +12,46 @@ public class UserDAONonPersistent implements IUserDAO
     {
         users = new ArrayList<UserDTO>();
 
-        initializeDummyData();
+    //    initializeDummyData();
     }
 
-    public void initializeDummyData()
-    {
-        List<String> roles = new ArrayList<String>();
-        roles.add("Admin");
 
-        UserDTO dummy1 = new UserDTO();
-        dummy1.setUserId(11);
-        dummy1.setUserName("Mette Vons");
-        dummy1.setIni("MeVo");
-        dummy1.setRoles(roles);
-
-        UserDTO dummy2 = new UserDTO();
-        dummy2.setUserId(12);
-        dummy2.setUserName("Steen Sikkert");
-        dummy2.setIni("StSi");
-        dummy2.setRoles(roles);
-
-        UserDTO dummy3 = new UserDTO();
-        dummy3.setUserId(13);
-        dummy3.setUserName("Dan Mark");
-        dummy3.setIni("DaMa");
-        dummy3.setRoles(roles);
-
-        try{
-            createUser(dummy1);
-            createUser(dummy2);
-            createUser(dummy3);
-        }
-        catch (DALException e){
-            System.out.println(e.getMessage());
-        }
-
-
-    }
-
+// TODO: Fix with new constructors
+//    public void initializeDummyData()
+//    {
+//        List<String> roles = new ArrayList<String>();
+//        roles.add("Admin");
+//
+//        UserDTO dummy1 = new UserDTO();
+//        dummy1.setUserId(11);
+//        dummy1.setUserName("Mette Vons");
+//        dummy1.setIni("MeVo");
+//        dummy1.setRoles(roles);
+//
+//        UserDTO dummy2 = new UserDTO();
+//        dummy2.setUserId(12);
+//        dummy2.setUserName("Steen Sikkert");
+//        dummy2.setIni("StSi");
+//        dummy2.setRoles(roles);
+//
+//        UserDTO dummy3 = new UserDTO();
+//        dummy3.setUserId(13);
+//        dummy3.setUserName("Dan Mark");
+//        dummy3.setIni("DaMa");
+//        dummy3.setRoles(roles);
+//
+//        try{
+//            createUser(dummy1);
+//            createUser(dummy2);
+//            createUser(dummy3);
+//        }
+//        catch (DALException e){
+//            System.out.println(e.getMessage());
+//        }
+//
+//
+//    }
+//
     public UserDTO getUser(int userId) throws DALException{
         for (UserDTO user : users)
         {
