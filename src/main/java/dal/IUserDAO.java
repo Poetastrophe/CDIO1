@@ -29,9 +29,27 @@ public interface IUserDAO {
   }
   public static class RoleNames{
    public static  final String ADMIN = "Administrator";
-   public static  final String FORMAND = "Formand";
    public static  final String FARMACEUT = "Farmaceut";
+   public static  final String FORMAND = "Formand";
    public static  final String OPERATOR = "Operatør";
+
+   public static final int ADMIN_INDEX = 1;
+   public static  final int FARMACEUT_INDEX = 2;
+   public static  final int FORMAND_INDEX = 3;
+   public static  final int OPERATOR_INDEX = 4;
+
+   public static int strToIndex(String str){
+       if(str.equals(ADMIN)) {
+           return ADMIN_INDEX;
+       }else if(str.equals(FARMACEUT)){
+           return FARMACEUT_INDEX;
+       }else if(str.equals(FORMAND)){
+           return FORMAND_INDEX;
+       }else if(str.equals(OPERATOR)){
+           return OPERATOR_INDEX;
+       }
+       throw new AssertionError("Not all roles are taken care of");
+   }
 
 
   }

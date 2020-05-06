@@ -192,20 +192,19 @@ public class UserDAOSQL implements IUserDAO {
         }
 
         // Check CPR
-        //boolean isInteger=true;
-        //String hyphen = "";
-        //try{
-        //    int test = Integer.parseInt(cpr.substring(0,6));
-        //    test = Integer.parseInt(cpr.substring(7,11));
-        //    hyphen = cpr.substring(6,7);
-        //}catch(NumberFormatException | StringIndexOutOfBoundsException e){
-        //    isInteger=false;
-        //    hyphen = "";
-        //}
-        //if(!isInteger || !hyphen.equals("-")){
-        //    errorlist.add(IUserDAO.UserFormatException.errortypes.CPR);
-        //}
-        //System.out.println(user.getCpr());
+        boolean isInteger=true;
+        String hyphen = "";
+        try{
+            int test = Integer.parseInt(cpr.substring(0,6));
+            test = Integer.parseInt(cpr.substring(7,11));
+            hyphen = cpr.substring(6,7);
+        }catch(NumberFormatException | StringIndexOutOfBoundsException e){
+            isInteger=false;
+            hyphen = "";
+        }
+        if(!isInteger || !hyphen.equals("-")){
+            errorlist.add(IUserDAO.UserFormatException.errortypes.CPR);
+        }
         // Check roles
         List<String> cpyRoles = new ArrayList<>(roles);
         cpyRoles.remove(IUserDAO.RoleNames.ADMIN);
@@ -232,8 +231,7 @@ public class UserDAOSQL implements IUserDAO {
             ps.setString(4, user.getCpr());
             ps.setString(5, user.getPassword());
             try {
-                //ps.setString(6, user.getRoles().get(0));
-                ps.setString(6, "1");
+                ps.setString(6, String.valueOf(IUserDAO.RoleNames.strToIndex(user.getRoles().get(0))));
             } catch (IndexOutOfBoundsException e){
                 ps.setString(6,null);
             }
