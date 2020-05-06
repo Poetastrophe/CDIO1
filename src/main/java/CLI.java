@@ -134,16 +134,16 @@ public class CLI{
         }
         List<String> roles = new ArrayList<>();
         if(admin){
-            roles.add("Administrator");
+            roles.add(IUserDAO.RoleNames.ADMIN);
         }
         if(farma){
-            roles.add("Farmaceut");
+            roles.add(IUserDAO.RoleNames.FARMACEUT);
         }
         if(formand){
-            roles.add("Formand");
+            roles.add(IUserDAO.RoleNames.FORMAND);
         }
         if(operator){
-            roles.add("Operatør");
+            roles.add(IUserDAO.RoleNames.OPERATOR);
         }
         try {
             func.createUser(id, userName, cpr, roles);
@@ -190,34 +190,42 @@ public class CLI{
      * Option 2 from main menu: List users
      */
     void listUsers2(){
-        printTable(Arrays.asList("ID", "Username","Initials","CPR", "Kodeord"), getUserRows());
+        printTable(Arrays.asList("ID", "Username","Initials","CPR", "Kodeord", "Rolle"), getUserRows());
     }
+
+    //Prints table along the lines of:
+    //+-------+------+------+
+    //| att1  | att2 | att3 |
+    //+-------+------+------+
 
     /**
      * Given attributes, and subsequent tubles (rows) it will print a SQL-like table
+     *
      * @param attributes
      * @param rows
      */
-    void printTable(List<String> attributes, List<List<String>> rows){
-        if (attributes.size() == rows.get(0).size()){
-            throw new AssertionError("The number of attributes should always be equal to the row size");
+    void printTable(List<String> attributes, List<List<String>> rows) {
+        if (rows.size() > 0 && attributes.size() != rows.get(0).size()) {
+            throw new AssertionError("a: " + attributes.size() + ", b: " + rows.get(0).size() + " The number of attributes should always be equal to the row size");
         }
+
         List<Integer> attWidth = new ArrayList<>();
-        for(int i = 0; i<attributes.size(); ++i){
+        for (int i = 0; i < attributes.size(); ++i) {
             attWidth.add(attributes.get(i).length());
         }
-        for(int r = 0; r<rows.size();++r){
-            for(int elem = 0; elem<attWidth.size(); ++elem){
-                if(attWidth.get(elem)<rows.get(r).get(elem).length()){
-                    attWidth.set(elem, rows.get(r).get(elem).length());
+        for (int r = 0; r < rows.size(); ++r) {
+            for (int elem = 0; elem < attWidth.size(); ++elem) {
+                int rowSize = rows.get(r).get(elem).length();
+                if (attWidth.get(elem) < rowSize) {
+                    attWidth.set(elem, rowSize);
                 }
             }
         }
         StringBuilder firstLine = new StringBuilder();
         firstLine.append("+");
-        for(int i = 0; i<attWidth.size(); ++i){
+        for (int i = 0; i < attWidth.size(); ++i) {
             StringBuilder tmp = new StringBuilder();
-            for(int k = 0; k<attWidth.get(i)+2; k++){
+            for (int k = 0; k < attWidth.get(i) + 2; k++) {
                 tmp.append("-");
             }
             firstLine.append(tmp);
@@ -227,9 +235,9 @@ public class CLI{
 
         StringBuilder attBuilder = new StringBuilder();
         attBuilder.append("| ");
-        for(int i = 0; i<attributes.size(); ++i){
+        for (int i = 0; i < attributes.size(); ++i) {
             StringBuilder spaces = new StringBuilder();
-            for(int k = 0; k<attWidth.get(i)-attributes.get(i).length(); k++){
+            for (int k = 0; k < attWidth.get(i) - attributes.get(i).length(); k++) {
                 spaces.append(" ");
             }
             attBuilder.append(attributes.get(i) + spaces + " | ");
@@ -242,9 +250,9 @@ public class CLI{
         for (int i = 0; i < rows.size(); ++i) {
             StringBuilder rowBuilder = new StringBuilder();
             rowBuilder.append("| ");
-            for(int att = 0; att<attributes.size(); ++att) {
+            for (int att = 0; att < attributes.size(); ++att) {
                 StringBuilder spaces = new StringBuilder();
-                for (int k = 0; k < attWidth.get(att)-rows.get(i).get(att).length(); k++) {
+                for (int k = 0; k < attWidth.get(att) - rows.get(i).get(att).length(); k++) {
                     spaces.append(" ");
                 }
                 rowBuilder.append(rows.get(i).get(att) + spaces + " | ");

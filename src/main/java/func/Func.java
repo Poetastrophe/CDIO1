@@ -39,7 +39,14 @@ public class Func implements IFunc {
     }
     @Override
     public String generateInitials(String username){
-        return "NOT IMPLMENTED GENERATEINITIALS IN FUNC";
+        String[] arr = username.split(" ");
+        String ini = "N/A";
+        if(arr.length == 1){
+            ini = username.substring(0,Math.min(username.length(), 4));
+        }else if(arr.length > 1){
+            ini = arr[0].substring(0,Math.min(2,arr[0].length())) + arr[1].substring(0,Math.min(2,arr[0].length()));
+        }
+        return ini;
     }
     @Override
     public String generateRandomPassword(){

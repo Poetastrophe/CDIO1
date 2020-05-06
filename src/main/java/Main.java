@@ -14,7 +14,7 @@ public class Main {
         Scanner in = new Scanner(System.in);
         //LOG IN FOR SQL LOCALHOST
         System.out.println("Type in your SQL username and password on a separate line");
-        IUserDAO dao = new UserDAOSQL("localhost","3306","CDIO",in.nextLine(),in.nextLine());
+        IUserDAO dao = new UserDAOSQL("localhost","3306","user_database",in.nextLine(),in.nextLine());
         //IUserDAO dao = new UserDAONonPersistent();
         IFunc func = new Func(dao);
         CLI cli = new CLI(func, in);

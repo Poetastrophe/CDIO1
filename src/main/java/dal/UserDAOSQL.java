@@ -192,19 +192,20 @@ public class UserDAOSQL implements IUserDAO {
         }
 
         // Check CPR
-        boolean isInteger=true;
-        String hyphen = "";
-        try{
-            int test = Integer.parseInt(cpr.substring(0,6));
-            test = Integer.parseInt(cpr.substring(7,11));
-            hyphen = cpr.substring(6,7);
-        }catch(NumberFormatException | StringIndexOutOfBoundsException e){
-            isInteger=false;
-            hyphen = "";
-        }
-        if(!isInteger || !hyphen.equals("-")){
-            errorlist.add(IUserDAO.UserFormatException.errortypes.CPR);
-        }
+        //boolean isInteger=true;
+        //String hyphen = "";
+        //try{
+        //    int test = Integer.parseInt(cpr.substring(0,6));
+        //    test = Integer.parseInt(cpr.substring(7,11));
+        //    hyphen = cpr.substring(6,7);
+        //}catch(NumberFormatException | StringIndexOutOfBoundsException e){
+        //    isInteger=false;
+        //    hyphen = "";
+        //}
+        //if(!isInteger || !hyphen.equals("-")){
+        //    errorlist.add(IUserDAO.UserFormatException.errortypes.CPR);
+        //}
+        //System.out.println(user.getCpr());
         // Check roles
         List<String> cpyRoles = new ArrayList<>(roles);
         cpyRoles.remove(IUserDAO.RoleNames.ADMIN);
@@ -231,12 +232,14 @@ public class UserDAOSQL implements IUserDAO {
             ps.setString(4, user.getCpr());
             ps.setString(5, user.getPassword());
             try {
-                ps.setString(6, user.getRoles().get(0));
+                //ps.setString(6, user.getRoles().get(0));
+                ps.setString(6, "1");
             } catch (IndexOutOfBoundsException e){
                 ps.setString(6,null);
             }
             ps.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new DALException("Cannot create new user. Check for unique ID");
         }
 
@@ -273,4 +276,43 @@ public class UserDAOSQL implements IUserDAO {
         }
         closeConnection();
     }
+    // Made by us during our database project in 02327
+    //First element in pair: Header coulumn,
+    // Second element:  rows
+    public Pair<List<String>, List<List<String>>> getResultOfQuery(String query) throws DALException {
+        openConnection();
+        List<List<String>> rows = new ArrayList<List<String>>();
+        List<String> header = new ArrayList<String>();
+
+        try {
+            ResultSet resultSet = _statement.executeQuery(query);
+
+            for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); ++i) {
+                header.add(resultSet.getMetaData().getColumnName(i));
+            }
+            while (resultSet.next()) {
+                rows.add(new ArrayList<String>());
+                for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); ++i) {
+                    rows.get(rows.size() - 1).add(String.valueOf(resultSet.getString(i)));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DALException("Could not fulfill query");
+        }
+        closeConnection();
+
+        return new Pair<List<String>, List<List<String>>>(header, rows);
+    }
+
+    public class Pair<L,R>{
+        public L left;
+        public R right;
+        Pair(L left, R right){
+            this.left = left;
+            this.right = right;
+        }
+    }
+
 }
